@@ -25,6 +25,7 @@ public class PrintTimeService : BackgroundService
 
         var tasks = Enumerable.Range(0, 500).Select(i => ConcurrentTask(i)).ToArray();
         //var tasks = Enumerable.Range(0, 10).Select(i => ConcurrentTask(i)).ToArray();
+        //var tasks = Enumerable.Range(0, 1).Select(i => ConcurrentTask(i)).ToArray();
 
         return Task.WhenAll(tasks);
 
@@ -70,8 +71,8 @@ public class PrintTimeService : BackgroundService
                     var l = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].Cycle.{++n}");
                     l.LogDebug("Write something in a just created new logger...");
                 }
-                var l2 = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].TicTac.{++n2}");
-                l2.LogDebug("Write something in a just created new logger...");
+                //var l2 = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].TicTac.{++n2}");
+                //l2.LogDebug("Write something in a just created new logger...");
                 await Task.Delay(2, stoppingToken);
                 _logger.LogDebug("Tic");
                 await Task.Delay(2, stoppingToken);

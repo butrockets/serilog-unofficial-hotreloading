@@ -1,14 +1,22 @@
 using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Serilog;
 
 
+var reloadingStrategy = ReloadingStrategy.Original;
+if(args.Length > 0)
+{
+    if (args[0].Contains('u')) reloadingStrategy = ReloadingStrategy.Unofficial;
+    else if (args[0].Contains('s')) reloadingStrategy = ReloadingStrategy.Switchable;
+}
+
 var reloadableLogger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] BootstrapLogger->{Message:lj}{NewLine}{Exception}")
-    .CreateReloadableLogger(args.Length > 0 && args[0].Contains('u'));
+    .CreateReloadableLogger(reloadingStrategy);
 
 Log.Logger = reloadableLogger;
 
@@ -28,11 +36,12 @@ try
     void doReloadLoggerConfiguration()
     {
         Log.Information("Reloading logger configuration");
+        var consoleLevel = builder.Configuration.GetValue<Serilog.Events.LogEventLevel>("ConsoleLogLevel");
         reloadableLogger.Reload(lc => lc
             .ReadFrom.Configuration(builder.Configuration)
             .ReadFrom.Services(app.Services)
             .Enrich.FromLogContext()
-            .WriteTo.Console(Serilog.Events.LogEventLevel.Information, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}->{Message:lj}{NewLine}{Exception}")
+            .WriteTo.Console(consoleLevel, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}->{Message:lj}{NewLine}{Exception}")
             );
     }
     doReloadLoggerConfiguration();
@@ -60,10 +69,26 @@ finally
     await Log.CloseAndFlushAsync();
 }
 
+enum ReloadingStrategy
+{
+    Original,       //Serilog.Extensions.Hosting.ReloadableLogger
+    Unofficial,     //Serilog.Extensions.Hosting.ReloadableLogger
+    Switchable,     //Serilog.Settings.Reloader.SwitchableLogger
+}
+
 static class XX
 {
-    public static ILogger CreateReloadableLogger(this LoggerConfiguration loggerConfiguration, bool useUnofficial)
-        => useUnofficial ? loggerConfiguration.CreateReloadableLogger() : loggerConfiguration.CreateBootstrapLogger();
+    public static ILogger CreateReloadableLogger(this LoggerConfiguration loggerConfiguration, ReloadingStrategy reloadingStrategy)
+    {
+        switch (reloadingStrategy)
+        {
+            case ReloadingStrategy.Unofficial:
+                return loggerConfiguration.CreateReloadableLogger();
+            case ReloadingStrategy.Switchable:
+                return new SwitchableLogger(loggerConfiguration.CreateLogger());
+        }
+        return loggerConfiguration.CreateBootstrapLogger();
+    }
 
     public static void Reload(this ILogger logger, Func<LoggerConfiguration, LoggerConfiguration> configure)
     {
@@ -74,6 +99,9 @@ static class XX
                 break;
             case Serilog.Extensions.Hosting.ReloadableLogger rl:
                 rl.Reload(configure);
+                break;
+            case SwitchableLogger sl:
+                sl.Set(configure(new LoggerConfiguration()).CreateLogger(), disposePrev: true);
                 break;
         }
     }

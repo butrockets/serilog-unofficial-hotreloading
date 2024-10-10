@@ -1,9 +1,16 @@
 # Serilog.Unofficial.HotReloading 
 
-Serilog logger supporting hot reload when configuration changes
+[Serilog](https://serilog.net/) logger supporting hot reload when configuration changes
 
-### Instructions
+## Introduction
+
+One 
 
 
-### References
+
+
+## Instructions
+
+
+## References
 
