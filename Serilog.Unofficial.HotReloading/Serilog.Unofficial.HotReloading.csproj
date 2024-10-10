@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <PackageTags>serilog</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/butrockets/serilog-unofficial-hotreloading</PackageProjectUrl>
@@ -9,7 +10,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <None Include="..\icon.png" Pack="true" PackagePath=""/>
+    <None Include="..\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Serilog" Version="4.0.2" />
     <InternalsVisibleTo Include="Serilog.Unofficial.HotReloading.Test"/>
