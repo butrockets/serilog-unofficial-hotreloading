@@ -56,8 +56,8 @@ public sealed class ReloadableLogger : ILogger, IReloadableLogger, IDisposable
     public void Reload(Func<LoggerConfiguration, LoggerConfiguration> configure)
     {
         if (configure == null) throw new ArgumentNullException(nameof(configure));
-                
-        using(_sync.WriteLock())
+
+        using (_sync.WriteLock())
         {
             _logger.Dispose();
             _logger = configure(new LoggerConfiguration()).CreateLogger();
