@@ -1,0 +1,19 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+    Enables the "Artifacts output layout" https://learn.microsoft.com/en-us/dotnet/core/sdk/artifacts-output
+    (a.k.a out of source build https://cgold.readthedocs.io/en/latest/tutorials/out-of-source.html) 
+    -->
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <!-- ArtifactsProjectName (default is $(MSBuildProjectName)) to replicate all folders structure from sln to project. Two leaf projects may have the same name!!! -->
+    <ArtifactsProjectName>$([MSBuild]::MakeRelative($(MSBuildThisFileDirectory), $(MSBuildProjectDirectory)))</ArtifactsProjectName>
+    
+           
+    <!-- Common props -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    
+  </PropertyGroup>
+
+</Project>
