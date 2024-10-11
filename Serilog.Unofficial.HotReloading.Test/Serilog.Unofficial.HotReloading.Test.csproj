@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Serilog.Unofficial.HotReloading\Serilog.Unofficial.HotReloading.csproj" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Settings.Reloader" Version="2.10.0" />
   </ItemGroup>
 
   <ItemGroup>
