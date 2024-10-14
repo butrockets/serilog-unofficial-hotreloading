@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Unofficial.HotReloading.Test", "Serilog.Unofficial.HotReloading.Test\Serilog.Unofficial.HotReloading.Test.csproj", "{1F09DA9F-D785-46F5-BD3C-529C50DAD209}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Unofficial.HotReloading.Test", "Serilog.Unofficial.HotReloading.Test\Serilog.Unofficial.HotReloading.Test.csproj", "{1F09DA9F-D785-46F5-BD3C-529C50DAD209}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickStartSample", "QuickStartSample\QuickStartSample.csproj", "{A8BE442C-1751-4149-B688-D79103E74257}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{1F09DA9F-D785-46F5-BD3C-529C50DAD209}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F09DA9F-D785-46F5-BD3C-529C50DAD209}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F09DA9F-D785-46F5-BD3C-529C50DAD209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8BE442C-1751-4149-B688-D79103E74257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8BE442C-1751-4149-B688-D79103E74257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8BE442C-1751-4149-B688-D79103E74257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8BE442C-1751-4149-B688-D79103E74257}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
