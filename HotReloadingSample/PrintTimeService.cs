@@ -22,10 +22,14 @@ public class PrintTimeService : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {        
         int TotCount = 0;
+        const int taskCount = 5000;
+        //const int taskCount = 500;
+        //const int taskCount = 10;
+        //const int taskCount = 1;
+        const int taskSemiDelay_ms = 20;
+        const double expectedFreq = 1000 / (taskSemiDelay_ms * 2) * taskCount;
 
-        var tasks = Enumerable.Range(0, 500).Select(i => ConcurrentTask(i)).ToArray();
-        //var tasks = Enumerable.Range(0, 10).Select(i => ConcurrentTask(i)).ToArray();
-        //var tasks = Enumerable.Range(0, 1).Select(i => ConcurrentTask(i)).ToArray();
+        var tasks = Enumerable.Range(0, taskCount).Select(i => ConcurrentTask(i)).ToArray();
 
         return Task.WhenAll(tasks);
 
@@ -39,7 +43,7 @@ public class PrintTimeService : BackgroundService
             var time = new Stopwatch();
             while (!stoppingToken.IsCancellationRequested)
             {
-                ++TotCount;
+                Interlocked.Increment(ref TotCount);
                 if (!time.IsRunning || time.ElapsedMilliseconds > 5000)
                 {
                     if (taskIndex == 0)
@@ -55,10 +59,10 @@ public class PrintTimeService : BackgroundService
                         var deltaT = time.Elapsed;
                         if (deltaT > TimeSpan.Zero)
                         {
-                            var freq = deltaCount / deltaT.TotalSeconds;
-
+                            var freq = double.Round(deltaCount / deltaT.TotalSeconds);
+                            var freqRatio = double.Round(100 * freq / expectedFreq);
                             var cpu_perc = double.Round((deltaProcTime / deltaT) * 100);
-                            _logger.LogWarning("TaskFrequency:{TaskFrequency} CPU%:{CpuPerc}", freq, cpu_perc);
+                            _logger.LogWarning("TaskFrequency:{TaskFrequency} ({TaskFrequencyRatio}%) CPU%:{CpuPerc}", freq, freqRatio, cpu_perc);
                         }
                     }
 
@@ -71,11 +75,11 @@ public class PrintTimeService : BackgroundService
                     var l = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].Cycle.{++n}");
                     l.LogDebug("Write something in a just created new logger...");
                 }
-                //var l2 = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].TicTac.{++n2}");
-                //l2.LogDebug("Write something in a just created new logger...");
-                await Task.Delay(2, stoppingToken);
+                var l2 = _loggerFactory.CreateLogger($"{typeof(PrintTimeService).FullName}.Task[{taskIndex}].TicTac.{++n2}");
+                l2.LogDebug("Write something in a just created new logger...");
+                await Task.Delay(taskSemiDelay_ms, stoppingToken);
                 _logger.LogDebug("Tic");
-                await Task.Delay(2, stoppingToken);
+                await Task.Delay(taskSemiDelay_ms, stoppingToken);
                 _logger.LogTrace("Tac");
             }
         }

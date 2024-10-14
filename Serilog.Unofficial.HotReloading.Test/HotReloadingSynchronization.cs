@@ -15,14 +15,17 @@ public class HotReloadingSynchronization(ITestOutputHelper testOutputHelper)
 {
     private const string ReloadRoundProp = "ReloadRound";
 
-
     class DisposableSink(Action<bool> incEmitCount) : ILogEventSink, IDisposable
     {
         private bool disposed = false;
         public void Dispose()
             => disposed = true;
         public void Emit(LogEvent logEvent)
-            => incEmitCount(disposed);
+        { 
+            incEmitCount(disposed);
+            if (disposed)
+                throw new ObjectDisposedException(nameof(DisposableSink));
+        }
     }
 
     class CountSink : ILogEventSink
@@ -56,7 +59,7 @@ public class HotReloadingSynchronization(ITestOutputHelper testOutputHelper)
     int emitOnNonDisposedSinkCount = 0;
 
     LoggerConfiguration ConfigureLogger(LoggerConfiguration lc, int reloadRound)
-        => lc.Enrich.FromLogContext()
+        => lc.Enrich.FromLogContext()            
             .Enrich.WithProperty(ReloadRoundProp, reloadRound)
             .WriteTo.Sink(countSink)
             .WriteTo.Sink(new DisposableSink((disposed) =>
@@ -196,7 +199,7 @@ public class HotReloadingSynchronization(ITestOutputHelper testOutputHelper)
     [MemberData(nameof(GetRounds))]
     public Task UnsupportedReloadableLogger(int round)
         => SynchronizationTest(CreateUnsupportedReloadableLogger(), expectFailure: false);
-    
+
     [Theory]
     [MemberData(nameof(GetRounds))]
     public Task SwitchableLogger(int round)

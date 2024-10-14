@@ -2,6 +2,7 @@
   "profiles": {
     "RuntimeReloadingConfigSample": {
       "commandName": "Project",
+      "commandLineArgs": "-u",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
