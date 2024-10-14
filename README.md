@@ -114,14 +114,16 @@ Some of these patterns are fully or partially supported
 
 But all them suffer some limitation (i.e. you cannot add a new `SourceContext` in app configuration file when it's already running [Adding new Override's on the fly](https://github.com/serilog/serilog-settings-configuration/issues/284#issuecomment-1289664499)).
 
+### Wrapper approach
+
 In my knowledge there are two example of a different approach very promising to overcome all the limitation and allow the full runtime reconfiguration capability (**!!! obviously it's not for free: all enhancements in runtime flexibility OBVIOUSLY come at some (little?) price in runtime perfs!!!** )
 
  - `SwitchableLogger` from unofficial [`Serilog.Settings.Reloader`](https://github.com/tagcode/serilog-settings-reloader) package 
- - `ReloadableLogger`/`CreateBootstrapLogger()` from official [`Serilog.Extensions.Hosting`](https://github.com/serilog/serilog-extensions-hosting) package (see [Bootstrap logging with Serilog + ASP.NET Core]()https://nblumhardt.com/2020/10/bootstrap-logger/)
+ - `ReloadableLogger`/`CreateBootstrapLogger()` from official [`Serilog.Extensions.Hosting`](https://github.com/serilog/serilog-extensions-hosting) package (see [Bootstrap logging with Serilog + ASP.NET Core](https://nblumhardt.com/2020/10/bootstrap-logger/))
 
 booth of them does some kind of "wrapping" around the real root serilog's logger pipeline allowing to swap it at runtime while the user's `ILogger` reference remain the same.
 
-## SwitchableLogger: it's lock free... synch issues?
+#### SwitchableLogger: it's lock free... synch issues?
 
 I used the unofficial `SwitchableLogger` for a long time: it just works very well (and IMHO the runtime performances are very high, probably the better possible of the "wrapper" approach) but i discovered a potential synchronization issue: during the (little?) time while we are "switching" the main logger, there is a race condition so an already existent `ILogger` has a chance to write to a disposed sink.
 
@@ -129,7 +131,7 @@ See `HotReloadingSynchronization` test in this repo for details
 
 Is it a concern? I don't know. IMHO the real impact is sink implementation dependent... (but it's reasonable to expect in the worst case some missing events in log files... probably not a big issue in many cases)
 
-## ReloadableLogger possible improvements
+#### ReloadableLogger possible improvements
 
 Anyway i decided to create this project deriving it from the official `ReloadableLogger`, and relying on it's strong synchronization model.
 I decided to fork it and not to use AS-IS because i tried also to gain 2 little extra bonus improvements:
