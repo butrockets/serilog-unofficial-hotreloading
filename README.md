@@ -2,6 +2,9 @@
 
 [Serilog](https://serilog.net/) logger supporting hot reload to apply at runtime logger pipeline configuration changes
 
+ - nuget [Serilog.Unofficial.HotReloading](https://www.nuget.org/packages/Serilog.Unofficial.HotReloading)
+ - github [Serilog.Unofficial.HotReloading](https://github.com/butrockets/serilog-unofficial-hotreloading)
+
 ## Quick start
 
 ```
